@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecopedia - Langkah Kecil, Perubahan Besar untuk Bumi</title>
+    <meta name="description" content="Bergabunglah dengan Ecopedia untuk melacak jejak karbon, ikuti tantangan, belanja di marketplace ramah lingkungan, dan jadilah bagian dari solusi.">
+    
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <nav class="navbar">
+            <a href="#" class="nav-logo" data-page-link="beranda">Ecopedia</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link" data-page-link="beranda">Beranda</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page-link="carbon-footprint">Jejak Karbon</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page-link="marketplace">Marketplace</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page-link="peta-aksi">Peta Aksi</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page-link="edukasi">EkoLearn</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-page-link="tantangan">Tantangan</a></li>
+                <li class="nav-item cta-item"><a href="#" class="nav-link cta-button">Masuk</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <main id="app-container">
+        <!-- ==================== HALAMAN BERANDA ==================== -->
+        <div id="beranda" class="page active" data-page="beranda">
+            <section class="hero">
+                <div class="hero-bg-layer"></div>
+                <div class="hero-content">
+                    <h1 class="hero-title">Langkah Kecil, Perubahan Besar</h1>
+                    <p class="hero-subtitle">Bergabunglah dengan komunitas EkoWarrior. Lacak dampak, belanja hijau, dan jadilah solusi untuk bumi.</p>
+                    <a href="#" class="cta-button hero-cta" data-page-link="carbon-footprint">Mulai Perjalanan Hijauku</a>
+                </div>
+                <div class="scroll-indicator"><span></span></div>
+            </section>
+
+            <section class="stats-section">
+                <div class="container">
+                    <div class="stat-item"><div class="stat-icon-wrapper"><i class="fas fa-tree stat-icon"></i></div><h3 class="stat-number" data-target="15420">0</h3><p>Pohon Virtual Ditanam</p></div>
+                    <div class="stat-item"><div class="stat-icon-wrapper"><i class="fas fa-shoe-prints stat-icon"></i></div><h3 class="stat-number" data-target="8900">0</h3><p>Ton CO₂ Tereduksi</p></div>
+                    <div class="stat-item"><div class="stat-icon-wrapper"><i class="fas fa-users stat-icon"></i></div><h3 class="stat-number" data-target="50000">0</h3><p>EkoWarrior Aktif</p></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== HALAMAN JEJAK KARBON ==================== -->
+        <div id="carbon-footprint" class="page" data-page="carbon-footprint">
+            <section class="page-header">
+                <div class="container">
+                    <h1>Kalkulator Jejak Karbon Pribadi</h1>
+                    <p>Pahami dampak aktivitas harian Anda terhadap lingkungan.</p>
+                </div>
+            </section>
+            <section class="page-content">
+                <div class="container">
+                    <form id="carbon-calculator-form" class="calculator-form">
+                        <div class="form-group">
+                            <label>Transportasi Utama (per minggu)</label>
+                            <div class="radio-group">
+                                <input type="radio" id="mobil" name="transport" value="mobil"><label for="mobil">Mobil</label>
+                                <input type="radio" id="motor" name="transport" value="motor"><label for="motor">Motor</label>
+                                <input type="radio" id="umum" name="transport" value="umum"><label for="umum">Transportasi Umum</label>
+                                <input type="radio" id="sepeda" name="transport" value="sepeda"><label for="sepeda">Sepeda / Jalan Kaki</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Konsumsi Daging (per minggu)</label>
+                            <div class="radio-group">
+                                <input type="radio" id="setiap-hari" name="meat" value="setiap-hari"><label for="setiap-hari">Setiap Hari</label>
+                                <input type="radio" id="beberapa-kali" name="meat" value="beberapa-kali"><label for="beberapa-kali">Beberapa Kali</label>
+                                <input type="radio" id="jarang" name="meat" value="jarang"><label for="jarang">Jarang / Tidak Pernah</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Penggunaan Listrik (per bulan dalam kWh)</label>
+                            <input type="number" id="listrik" placeholder="Contoh: 300" min="0">
+                        </div>
+                        <button type="submit" class="cta-button">Hitung Jejak Karbonku</button>
+                    </form>
+                    <div id="carbon-result" class="result-box" style="display: none;">
+                        <h3>Hasil Jejak Karbon Anda</h3>
+                        <div class="result-visual">
+                            <div class="globe-container"><i class="fas fa-globe-americas globe-icon"></i></div>
+                            <p class="result-text">Estimasi jejak karbon tahunan Anda adalah <span id="carbon-score">0</span> ton CO₂.</p>
+                            <p class="result-advice">Untuk menguranginya, coba <strong>menggunakan transportasi umum lebih sering</strong> dan <strong>mengurangi konsumsi daging</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== HALAMAN MARKETPLACE ==================== -->
+        <div id="marketplace" class="page" data-page="marketplace">
+            <section class="page-header">
+                <div class="container">
+                    <h1>Marketplace Ecopedia</h1>
+                    <p>Temukan produk-produk ramah lingkungan dari mitra terpercaya kami.</p>
+                </div>
+            </section>
+            <section class="page-content">
+                <div class="container">
+                    <div class="product-grid">
+                        <div class="product-card">
+                            <div class="product-image-wrapper"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Botol Minum Reusable"></div>
+                            <div class="product-content">
+                                <span class="product-category">Aksesori</span>
+                                <h3>Botol Minum Kaca "AquaVita"</h3>
+                                <p>Botol minum dari kaca berkualitas tinggi dengan sleeve pelindung dari kain daur ulang.</p>
+                                <div class="product-footer">
+                                    <span class="product-price">Rp 125.000</span>
+                                    <button class="card-button">Tambah ke Keranjang</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image-wrapper"><img src="https://images.unsplash.com/photo-1604719313463-eaeacc39803a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Tas Belanja Kain"></div>
+                            <div class="product-content">
+                                <span class="product-category">Rumah Tangga</span>
+                                <h3>Tas Belanja Lipat "EcoBag"</h3>
+                                <p>Tas belanja yang kuat, ringan, dan mudah dilipat. Solusi untuk mengurangi plastik sekali pakai.</p>
+                                <div class="product-footer">
+                                    <span class="product-price">Rp 55.000</span>
+                                    <button class="card-button">Tambah ke Keranjang</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-card">
+                            <div class="product-image-wrapper"><img src="https://images.unsplash.com/photo-1610368132818-9a0a9941b618?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Sikat Gigi Bambu"></div>
+                            <div class="product-content">
+                                <span class="product-category">Perawatan Diri</span>
+                                <h3>Sikat Gigi Bambu "BambooBrush"</h3>
+                                <p>Sikat gigi dengan pegangan dari bambu yang dapat terurai secara alami. Bulir sikat lembut untuk gusi Anda.</p>
+                                <div class="product-footer">
+                                    <span class="product-price">Rp 35.000</span>
+                                    <button class="card-button">Tambah ke Keranjang</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== HALAMAN PETA AKSI ==================== -->
+        <div id="peta-aksi" class="page" data-page="peta-aksi">
+            <section class="page-header">
+                <div class="container">
+                    <h1>Peta Aksi Lokal</h1>
+                    <p>Temukan kegiatan dan lokasi ramah lingkungan di sekitar Anda. Mari bergerak bersama!</p>
+                </div>
+            </section>
+            <section class="page-content">
+                <div class="container">
+                    <div class="map-filters">
+                        <button class="filter-btn active" data-filter="semua">Semua</button>
+                        <button class="filter-btn" data-filter="bank-sampah">Bank Sampah</button>
+                        <button class="filter-btn" data-filter="acara">Acara</button>
+                        <button class="filter-btn" data-filter="toko">Toko Hijau</button>
+                    </div>
+                    <div id="map-placeholder">
+                        <i class="fas fa-map-marked-alt map-icon"></i>
+                        <p>Peta interaktif akan dimuat di sini.</p>
+                        <p>Anda dapat mengintegrasikan library seperti <strong>Leaflet.js</strong> atau <strong>Google Maps API</strong> untuk menampilkan peta sungguhan.</p>
+                        <div class="map-legend">
+                            <span><i class="fas fa-map-pin" style="color: var(--primary-color);"></i> Bank Sampah</span>
+                            <span><i class="fas fa-map-pin" style="color: var(--secondary-color);"></i> Acara</span>
+                            <span><i class="fas fa-map-pin" style="color: var(--accent-color);"></i> Toko Hijau</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== HALAMAN EKOLEARN ==================== -->
+        <div id="edukasi" class="page" data-page="edukasi">
+            <section class="page-header">
+                <div class="container">
+                    <h1>EkoLearn</h1>
+                    <p>Pusat belajar segala hal tentang lingkungan. Dari tips sederhana hingga pemahaman isu global.</p>
+                </div>
+            </section>
+            <section class="page-content">
+                <div class="container">
+                    <div class="learn-grid">
+                        <article class="learn-card">
+                            <div class="learn-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1628595351029-c2bf17511435?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Panduan Kompos">
+                                <div class="learn-category">Tips & Trik</div>
+                            </div>
+                            <div class="learn-content">
+                                <h3>Panduan Lengkap Membuat Kompos di Rumah</h3>
+                                <p>Ubah sampah organik Anda menjadi emas hitam untuk tanaman. Panduan langkah demi langkah untuk pemula.</p>
+                                <a href="#" class="learn-link">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </article>
+                        <article class="learn-card">
+                            <div class="learn-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Energi Terbarukan">
+                                <div class="learn-category">Isu Global</div>
+                            </div>
+                            <div class="learn-content">
+                                <h3>Mengenal Energi Terbarukan: Masa Depan Planet Kita</h3>
+                                <p>Apa itu energi surya, angin, dan hidro? Pelajari bagaimana teknologi ini membantu menyelamatkan bumi.</p>
+                                <a href="#" class="learn-link">Baca Selengkapnya <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </article>
+                        <article class="learn-card featured">
+                            <div class="learn-image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1596657687141-668a073127e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Video Edukasi">
+                                <div class="learn-category">Video</div>
+                                <div class="play-button"><i class="fas fa-play"></i></div>
+                            </div>
+                            <div class="learn-content">
+                                <h3>Video: 5 Menit Memahami Perubahan Iklim</h3>
+                                <p>Penjelasan singkat dan menarik tentang apa itu perubahan iklim, penyebabnya, dan dampaknya bagi kita semua.</p>
+                                <a href="#" class="learn-link">Tonton Sekarang <i class="fas fa-play-circle"></i></a>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== HALAMAN TANTANGAN ==================== -->
+        <div id="tantangan" class="page" data-page="tantangan">
+            <section class="page-header">
+                <div class="container">
+                    <h1>Tantangan "Eko-Warrior"</h1>
+                    <p>Ubah aksi lingkungan menjadi permainan yang menyenangkan!</p>
+                </div>
+            </section>
+            <section class="page-content">
+                <div class="container">
+                    <div class="challenges-grid">
+                        <div class="challenge-card">
+                            <div class="card-image-wrapper"><img src="https://images.unsplash.com/photo-1593696140826-c58b021acf8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Tantangan Tanpa Sedotan"></div>
+                            <div class="card-content"><h3>Minggu Tanpa Sedotan</h3><p>Tantang diri Anda untuk tidak menggunakan sedotan plastik selama 7 hari.</p><button class="card-button">Ikuti Tantangan</button></div>
+                        </div>
+                        <div class="challenge-card">
+                            <div class="card-image-wrapper"><img src="https://images.unsplash.com/photo-1618468340936-68e4b4aca2e5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Tantangan Daur Ulang"></div>
+                            <div class="card-content"><h3>Master Daur Ulang</h3><p>Pisahkan sampah organik dan anorganik Anda selama sebulan penuh.</p><button class="card-button">Ikuti Tantangan</button></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 Ecopedia. Dibuat dengan <i class="fas fa-heart" style="color: #E9C46A;"></i> untuk Bumi.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
