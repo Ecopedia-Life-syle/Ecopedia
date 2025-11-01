@@ -6,7 +6,6 @@ async function main() {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
   });
-  console.log(response.text);
 }
 
 await main();

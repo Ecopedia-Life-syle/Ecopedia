@@ -1,20 +1,13 @@
-// // src/routes/recycleRoutes.js
-// const express = require('express');
-// const router = express.Router();
-// const recycleController = require('../controller/geminiController');
-// const upload = require('../multer');
+// src/routes/geminiRoutes.js
+import express from "express";
+import multer from "multer";
+import { uploadAndAnalyze } from "../controller/geminiController.js";
 
-// // POST: Upload dan analisis gambar
-// router.post(
-//   '/analyze',
-//   upload.single('image'),
-//   recycleController.analyzeAndSave
-// );
+const router = express.Router();
 
-// // GET: Ambil semua recycle items
-// router.get('/items', recycleController.getAllItems);
+// gunakan memoryStorage agar file tidak disimpan di disk
+const upload = multer({ storage: multer.memoryStorage() });
 
-// // GET: Ambil recycle item by ID
-// router.get('/items/:id', recycleController.getItemById);
+router.post("/analyze", upload.single("image"), uploadAndAnalyze);
 
-// module.exports = router;
+export default router; // ✅ gunakan export default, bukan module.exports

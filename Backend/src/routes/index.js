@@ -15,6 +15,10 @@ const defaultRoute = [
     path:"/carbon",
     router:carbonRoutes,   
 },
+{
+    path:"/ai",
+    router:require("./geminiRoutes").default,
+}
 // {
 //     path:"/profile",
 //     router:profileRouter,

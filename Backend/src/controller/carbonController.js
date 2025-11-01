@@ -15,6 +15,21 @@ async function addCarbonRecord(req, res) {
   }
 }
 
+async function addCarbonTransport(req,res){
+    try {
+        const userId = req.user.id;
+        const { transportMode, distance } = req.body;
+        const result = await carbonService.recordTransportCarbon(userId, transportMode, distance);
+        res.status(201).json({
+            message: 'Data karbon transportasi berhasil disimpan',
+            data: result
+        });
+    } catch (error) {
+        console.error('Error recording transport carbon:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 async function getCarbonStats(req, res) {
   try {
     const userId = req.params.userId;
