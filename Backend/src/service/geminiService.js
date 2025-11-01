@@ -28,11 +28,13 @@ export async function analyzeImage(buffer) {
 
 
       KETENTUAN: 
+      1. Maksisamal 150 kata
 1. Berikan 3 ide upcycling dengan tingkat kesulitan berbeda (mudah, sedang, sulit)
 2. Tutorial harus 5-7 langkah yang jelas dan mudah diikuti
 3. Harga estimasi dalam Rupiah (realistis untuk pasar Indonesia: 20.000 - 300.000)
 4. Semua teks HARUS dalam Bahasa Indonesia
-5. Material yang dibutuhkan harus mudah didapat di Indonesia `
+5. Material yang dibutuhkan harus mudah didapat di Indonesia
+6. jangan berikan hasil yang terlalu panjang `;
 
     const result = await model.generateContent([prompt, image]);
     return result.response.text();
@@ -41,7 +43,6 @@ export async function analyzeImage(buffer) {
     throw new Error("Gagal menganalisis gambar");
   }
 }
-
 
 // // src/service/recycleService.js
 // const { getGeminiModel } = require('../config/gemini');
@@ -52,7 +53,7 @@ export async function analyzeImage(buffer) {
 //   async analyzeImage(imagePath) {
 //     try {
 //       const model = getGeminiModel();
-      
+
 //       // Baca file gambar
 //       const imageData = await fs.readFile(imagePath);
 //       const base64Image = imageData.toString('base64');
@@ -94,15 +95,15 @@ export async function analyzeImage(buffer) {
 
 //       const response = await result.response;
 //       const text = response.text();
-      
+
 //       // Parse JSON dari response
 //       const jsonMatch = text.match(/\{[\s\S]*\}/);
 //       if (!jsonMatch) {
 //         throw new Error('Failed to parse AI response');
 //       }
-      
+
 //       const analysisResult = JSON.parse(jsonMatch[0]);
-      
+
 //       return analysisResult;
 //     } catch (error) {
 //       console.error('Error analyzing image:', error);
@@ -114,7 +115,7 @@ export async function analyzeImage(buffer) {
 //     try {
 //       // Simpan setiap saran recycle sebagai item terpisah
 //       const savedItems = [];
-      
+
 //       for (const suggestion of data.recycleSuggestions) {
 //         const item = await prisma.recycleItem.create({
 //           data: {
@@ -134,7 +135,7 @@ export async function analyzeImage(buffer) {
 //         });
 //         savedItems.push(item);
 //       }
-      
+
 //       return savedItems;
 //     } catch (error) {
 //       console.error('Error saving recycle item:', error);
@@ -160,11 +161,11 @@ export async function analyzeImage(buffer) {
 //       const item = await prisma.recycleItem.findUnique({
 //         where: { id }
 //       });
-      
+
 //       if (!item) {
 //         throw new Error('Recycle item not found');
 //       }
-      
+
 //       return item;
 //     } catch (error) {
 //       console.error('Error fetching recycle item:', error);

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+// --- import section ---
+import React, { useState, createContext, useContext } from "react";
+import { analyzeAi, loginUser, registerUser } from "../api/api";
 import {
   LineChart,
   Line,
@@ -11,16 +13,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import {
-  Car,
-  Utensils,
-  Zap,
-  TrendingDown,
-  Award,
-  Leaf,
-  Target,
-} from "lucide-react";
 
+// --- constant section ---
 const COLORS = ["#ef4444", "#f59e0b", "#10b981"];
 
 const EMISSION_FACTORS = {
@@ -37,9 +31,157 @@ const EMISSION_FACTORS = {
   tv_per_hour: 0.1,
 };
 
-export default function CarbonTracker() {
-  const [view, setView] = useState("dashboard");
+// --- context setup ---
+const AppContext = createContext();
+function AppProvider({ children }) {
+  const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [activities, setActivities] = useState([]);
+  return (
+    <AppContext.Provider
+      value={{
+        users,
+        setUsers,
+        currentUser,
+        setCurrentUser,
+        activities,
+        setActivities,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
+}
+function useApp() {
+  return useContext(AppContext);
+}
+
+// --- Auth component ---
+function Auth() {
+  const { users, setUsers, setCurrentUser } = useApp();
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const data = await loginUser(email, password);
+      setCurrentUser(data.user);
+      localStorage.setItem("token", data.token);
+      setError("");
+      alert("Login berhasil! Selamat datang di EcoPedia 🌿");
+    } catch (err) {
+      setError("Login gagal: " + err.message);
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      await registerUser(email, password);
+      alert("Registrasi berhasil! Silakan login.");
+      setIsLogin(true);
+    } catch (err) {
+      setError("Gagal daftar: " + err.message);
+    }
+  };
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    setError("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      if (isLogin) handleLogin();
+      else handleRegister();
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50">
+      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+        <div className="text-center mb-6">
+          <div className="text-5xl mb-2">🌿</div>
+          <h2 className="text-2xl font-bold">
+            {isLogin ? "Login ke EcoPedia" : "Daftar EcoPedia"}
+          </h2>
+        </div>
+
+        {error && (
+          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+        )}
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="w-full p-3 border rounded-lg"
+            placeholder="email@example.com"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="w-full p-3 border rounded-lg"
+            placeholder="********"
+          />
+        </div>
+
+        {!isLogin && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">
+              Konfirmasi Password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="w-full p-3 border rounded-lg"
+              placeholder="********"
+            />
+          </div>
+        )}
+
+        <button
+          onClick={isLogin ? handleLogin : handleRegister}
+          className="w-full bg-emerald-600 text-white p-3 rounded-lg font-semibold hover:bg-emerald-700 mb-4 flex items-center justify-center gap-2"
+        >
+          <span>{isLogin ? "Login" : "Daftar"}</span>
+          <span className="text-xl">→</span>
+        </button>
+
+        <p className="text-sm text-center text-gray-600">
+          {isLogin ? "Belum punya akun?" : "Sudah punya akun?"}{" "}
+          <span
+            onClick={toggleMode}
+            className="text-emerald-600 cursor-pointer font-semibold hover:underline"
+          >
+            {isLogin ? "Daftar di sini" : "Login di sini"}
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Dashboard Component
+function Dashboard() {
+  const { currentUser, setCurrentUser, activities, setActivities } = useApp();
+  const [view, setView] = useState("dashboard");
   const [transportType, setTransportType] = useState("motor");
   const [transportKm, setTransportKm] = useState("");
   const [foodType, setFoodType] = useState("daging_ayam");
@@ -47,17 +189,14 @@ export default function CarbonTracker() {
   const [acHours, setAcHours] = useState("");
   const [tvHours, setTvHours] = useState("");
 
-  useEffect(() => {
-    const saved = localStorage.getItem("carbonData");
-    if (saved) {
-      setActivities(JSON.parse(saved));
-    }
-  }, []);
+  const [aiDescription, setAiDescription] = useState("");
+  const [aiImage, setAiImage] = useState(null);
+  const [aiResult, setAiResult] = useState(null);
+  const [loadingAi, setLoadingAi] = useState(false);
 
   const saveActivity = (newActivity) => {
     const updated = [newActivity, ...activities];
     setActivities(updated);
-    localStorage.setItem("carbonData", JSON.stringify(updated));
   };
 
   const getTodayTotal = () => {
@@ -97,6 +236,23 @@ export default function CarbonTracker() {
         name: name.charAt(0).toUpperCase() + name.slice(1),
         value: parseFloat(value.toFixed(2)),
       }));
+  };
+  const handleClickAi = async () => {
+    try {
+      setLoadingAi(true);
+
+      const formData = new FormData();
+      formData.append("prompt", aiDescription);
+      if (aiImage) formData.append("image", aiImage);
+
+      const result = await analyzeAi(formData);
+      setAiResult(result);
+    } catch (err) {
+      console.error("Gagal analisis AI:", err);
+      alert("Terjadi kesalahan saat menganalisis AI");
+    } finally {
+      setLoadingAi(false);
+    }
   };
 
   const handleTransport = () => {
@@ -147,6 +303,22 @@ export default function CarbonTracker() {
     }
   };
 
+  const cleanText = (text) => {
+    if (!text) return "";
+    return text
+      .replace(/\*\*/g, "") // Hapus **
+      .replace(/\*/g, "") // Hapus *
+      .replace(/\\n/g, " ") // Ganti \n dengan spasi
+      .replace(/\n/g, " ") // Ganti newline dengan spasi
+      .trim();
+  };
+
+  const handleLogout = () => {
+    alert("Logout berhasil! Sampai jumpa lagi 👋");
+    setCurrentUser(null);
+    localStorage.removeItem("token");
+  };
+
   const todayTotal = getTodayTotal();
   const weekData = getWeekData();
   const categoryData = getCategoryData();
@@ -157,36 +329,47 @@ export default function CarbonTracker() {
       <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-6 shadow-lg">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Leaf className="w-10 h-10" />
+            <div className="text-4xl">🌿</div>
             <div>
-              <h1 className="text-3xl font-bold">EcoTrack</h1>
+              <h1 className="text-3xl font-bold">EcoPedia</h1>
               <p className="text-sm text-emerald-100">
                 Carbon Footprint Tracker
               </p>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-4xl font-bold">{todayTotal.toFixed(1)}</div>
-            <div className="text-sm">kg CO₂ hari ini</div>
+          <div className="flex items-center gap-6">
+            <div className="text-right">
+              <div className="text-4xl font-bold">{todayTotal.toFixed(1)}</div>
+              <div className="text-sm">kg CO₂ hari ini</div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition"
+            >
+              <span className="text-xl">🚪</span>
+              <span className="text-sm">Logout</span>
+            </button>
           </div>
         </div>
       </div>
 
       <div className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 flex gap-6">
-          {["dashboard", "input", "insights", "achievements"].map((v) => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              className={`py-4 px-2 border-b-2 font-medium ${
-                view === v
-                  ? "border-emerald-600 text-emerald-600"
-                  : "border-transparent text-gray-500"
-              }`}
-            >
-              {v.charAt(0).toUpperCase() + v.slice(1)}
-            </button>
-          ))}
+          {["dashboard", "input", "scanai", "insights", "achievements"].map(
+            (v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`py-4 px-2 border-b-2 font-medium ${
+                  view === v
+                    ? "border-emerald-600 text-emerald-600"
+                    : "border-transparent text-gray-500"
+                }`}
+              >
+                {v.charAt(0).toUpperCase() + v.slice(1)}
+              </button>
+            )
+          )}
         </div>
       </div>
 
@@ -195,19 +378,19 @@ export default function CarbonTracker() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white rounded-xl shadow p-6">
-                <Target className="w-10 h-10 text-emerald-500 mb-2" />
+                <div className="text-4xl text-emerald-500 mb-2">🎯</div>
                 <p className="text-sm text-gray-600">Hari Ini</p>
                 <p className="text-3xl font-bold">{todayTotal.toFixed(1)}</p>
                 <p className="text-xs text-gray-500">kg CO₂</p>
               </div>
               <div className="bg-white rounded-xl shadow p-6">
-                <TrendingDown className="w-10 h-10 text-blue-500 mb-2" />
+                <div className="text-4xl text-blue-500 mb-2">📉</div>
                 <p className="text-sm text-gray-600">Minggu Ini</p>
                 <p className="text-3xl font-bold">{weekTotal.toFixed(1)}</p>
                 <p className="text-xs text-gray-500">kg CO₂</p>
               </div>
               <div className="bg-white rounded-xl shadow p-6">
-                <Leaf className="w-10 h-10 text-teal-500 mb-2" />
+                <div className="text-4xl text-teal-500 mb-2">🌳</div>
                 <p className="text-sm text-gray-600">Pohon Dibutuhkan</p>
                 <p className="text-3xl font-bold">
                   {Math.ceil(todayTotal / 0.5)}
@@ -274,15 +457,11 @@ export default function CarbonTracker() {
                   className="flex justify-between p-3 bg-gray-50 rounded-lg mb-2"
                 >
                   <div className="flex items-center gap-3">
-                    {a.type === "transport" && (
-                      <Car className="w-5 h-5 text-red-500" />
-                    )}
-                    {a.type === "food" && (
-                      <Utensils className="w-5 h-5 text-orange-500" />
-                    )}
-                    {a.type === "energy" && (
-                      <Zap className="w-5 h-5 text-blue-500" />
-                    )}
+                    <span className="text-2xl">
+                      {a.type === "transport" && "🚗"}
+                      {a.type === "food" && "🍽️"}
+                      {a.type === "energy" && "⚡"}
+                    </span>
                     <div>
                       <p className="font-medium text-sm">
                         {a.name.replace("_", " ").toUpperCase()}
@@ -309,7 +488,7 @@ export default function CarbonTracker() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow p-6">
               <div className="flex items-center gap-2 mb-4">
-                <Car className="w-6 h-6 text-red-500" />
+                <span className="text-3xl">🚗</span>
                 <h3 className="text-xl font-semibold">Transportasi</h3>
               </div>
               <div className="space-y-4">
@@ -353,7 +532,7 @@ export default function CarbonTracker() {
 
             <div className="bg-white rounded-xl shadow p-6">
               <div className="flex items-center gap-2 mb-4">
-                <Utensils className="w-6 h-6 text-orange-500" />
+                <span className="text-3xl">🍽️</span>
                 <h3 className="text-xl font-semibold">Makanan</h3>
               </div>
               <div className="space-y-4">
@@ -396,7 +575,7 @@ export default function CarbonTracker() {
 
             <div className="bg-white rounded-xl shadow p-6">
               <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-6 h-6 text-blue-500" />
+                <span className="text-3xl">⚡</span>
                 <h3 className="text-xl font-semibold">Energi</h3>
               </div>
               <div className="space-y-4">
@@ -433,6 +612,90 @@ export default function CarbonTracker() {
                   + Tambah Energi
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+        {view === "scanai" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-3xl">🤖</span>
+                <h3 className="text-xl font-semibold">ScanAI Analyzer</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Unggah foto barang bekas dan biarkan AI menganalisis potensi
+                dari daur ulang barang bekas dan mengurangi pencermaran karbon
+                🌍
+              </p>
+
+              <div className="space-y-4">
+                {/* Deskripsi */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Deskripsi Aktivitas
+                  </label>
+                  <textarea
+                    value={aiDescription}
+                    onChange={(e) => setAiDescription(e.target.value)}
+                    placeholder="Contoh: berikan saya ide tentang barang bekas botol..."
+                    className="w-full p-3 border rounded-lg h-24"
+                  ></textarea>
+                </div>
+
+                {/* Upload Gambar */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Unggah Gambar (opsional)
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setAiImage(e.target.files[0])}
+                    className="w-full border rounded-lg p-2"
+                  />
+                  {aiImage && (
+                    <div className="mt-3">
+                      <img
+                        src={URL.createObjectURL(aiImage)}
+                        alt="Preview"
+                        className="w-48 h-48 object-cover rounded-lg border"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Tombol Analisis */}
+                <button
+                  onClick={handleClickAi}
+                  disabled={loadingAi}
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-3 rounded-lg font-semibold hover:opacity-90 flex items-center justify-center gap-2"
+                >
+                  {loadingAi ? "⏳ Menganalisis..." : "🔍 Analisis dengan AI"}
+                </button>
+              </div>
+            </div>
+
+            {/* Hasil Analisis */}
+            <div className="bg-white rounded-xl shadow p-6">
+              <h3 className="font-semibold mb-4">Hasil Analisis</h3>
+              {!aiResult ? (
+                <div className="h-48 flex flex-col items-center justify-center text-gray-400 text-sm">
+                  <p>
+                    Belum ada hasil. Silakan unggah aktivitas untuk dianalisis.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-gray-700">
+                    <strong>Deskripsi:</strong>{" "}
+                    {cleanText(aiResult.description) || aiDescription}
+                  </p>
+                  <p className="text-gray-600 text-sm italic">
+                    {aiResult.suggestion ||
+                      "AI mungkin  belum memberikan saran yang terbaik."}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -517,7 +780,7 @@ export default function CarbonTracker() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow p-6">
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Award className="w-6 h-6 text-yellow-500" />
+                <span className="text-2xl">🏆</span>
                 Badge & Pencapaian
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -619,4 +882,22 @@ export default function CarbonTracker() {
       </div>
     </div>
   );
+}
+
+// Main App
+// --- Export all components & hooks ---
+export { AppProvider, useApp, Auth, Dashboard };
+
+// Default export boleh tetap App, tapi bisa juga dihapus kalau tidak dipakai
+export default function CarbonTracker() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
+  );
+}
+
+function AppContent() {
+  const { currentUser } = useApp();
+  return currentUser ? <Dashboard /> : <Auth />;
 }

@@ -18,9 +18,9 @@ async function login(req, res) {
          if (!isPasswordValid) {
          return res.status(401).json({ message: "Email atau password salah" });
         }
-        if(email !== user.email || password !== user.password || isPasswordValid) {
-            return res.status(401).json({ message: "Email atau password salah" });
-        }
+        // if(email !== user.email || password !== user.password || isPasswordValid) {
+        //     return res.status(401).json({ message: "Email atau password salah" });
+        // }
     return res.status(200).json({
       message: "Login berhasil",
       user: {
